@@ -22,9 +22,10 @@ if (typeof TetherBase === 'undefined') {
 }
 
 function getScrollParent(el) {
-  var _getComputedStyle = getComputedStyle(el);
-
-  var position = _getComputedStyle.position;
+  // In firefox if the el is inside an iframe with display: none; window.getComputedStyle() will return null;
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=548397
+  var computedStyle = getComputedStyle(el) || {};
+  var position = computedStyle.position;
 
   if (position === 'fixed') {
     return el;
@@ -1157,7 +1158,7 @@ var TetherClass = (function () {
             return getOffsetParent(_this6.target);
           });
 
-          if (getOffsetParent(_this6.element) !== offsetParent) {
+          if (!_this6.options.skipMoveElement && getOffsetParent(_this6.element) !== offsetParent) {
             defer(function () {
               _this6.element.parentNode.removeChild(_this6.element);
               offsetParent.appendChild(_this6.element);
@@ -1172,7 +1173,7 @@ var TetherClass = (function () {
         transcribe({ top: true, left: true }, pos.page);
       }
 
-      if (!moved) {
+      if (!this.options.skipMoveElement && !moved) {
         var offsetParentIsBody = true;
         var currentNode = this.element.parentNode;
         while (currentNode && currentNode.tagName !== 'BODY') {

@@ -720,7 +720,7 @@ class TetherClass {
       css.position = 'absolute';
       const offsetParent = this.cache('target-offsetparent', () => getOffsetParent(this.target));
 
-      if (getOffsetParent(this.element) !== offsetParent) {
+      if (!this.options.skipMoveElement && getOffsetParent(this.element) !== offsetParent) {
         defer(() => {
           this.element.parentNode.removeChild(this.element);
           offsetParent.appendChild(this.element);
@@ -735,7 +735,7 @@ class TetherClass {
       transcribe({top: true, left: true}, pos.page);
     }
 
-    if (!moved) {
+    if (!this.options.skipMoveElement && !moved) {
       let offsetParentIsBody = true;
       let currentNode = this.element.parentNode;
       while (currentNode && currentNode.tagName !== 'BODY') {
